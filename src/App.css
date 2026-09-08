@@ -614,12 +614,6 @@ body {
   font-size: 1.55rem !important;
 }
 
-.featured-row {
-  background: #242f34;
-  margin: 0 -12px;
-  opacity: 0.72;
-}
-
 .details-grid {
   display: grid;
   gap: 18px;
@@ -739,5 +733,4 @@ body {
   .scenario-header { display: none; }
   .scenario-row { grid-template-columns: minmax(0, 1fr) 74px; padding: 14px 0; }
   .scenario-row > span:last-child { grid-column: 1 / -1; justify-content: flex-start; }
-  .featured-row { margin: 0 -8px; padding: 0 8px; }
 }
