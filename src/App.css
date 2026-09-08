@@ -443,16 +443,11 @@ body {
   letter-spacing: -0.07em;
   line-height: 1;
   margin: 42px 0 14px;
+  min-height: 125px;
 }
 
 .target-status::after {
-  background: currentColor;
-  content: "";
-  display: block;
-  height: 5px;
-  margin-top: 16px;
-  opacity: 0.48;
-  width: 58px;
+  display: none;
 }
 
 .target-panel.reward-free .target-status,
@@ -471,6 +466,7 @@ body {
   color: #aec9c0;
   font-size: 0.88rem;
   line-height: 1.5;
+  min-height: 48px;
 }
 
 .target-panel.reward-free p,
@@ -482,10 +478,12 @@ body {
 }
 
 .target-comparison {
+  border-top: 1px solid rgba(213, 239, 229, 0.3);
   display: grid;
   gap: 12px;
   grid-template-columns: repeat(2, 1fr);
   margin-top: 24px;
+  padding-top: 14px;
 }
 
 .target-comparison span {
