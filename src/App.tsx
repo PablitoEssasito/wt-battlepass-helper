@@ -10,7 +10,6 @@ import { battlepassRules } from "./data/battlepassRules";
 
 function App() {
   const seasonEndDate = "2026-10-21";
-  const seasonStart = dayjs("2026-07-22T12:00:00Z");
   const originalLastDay = dayjs(seasonEndDate);
   const [bpLevel, setBpLevel] = useState(0);
   const [levelProgress, setLevelProgress] = useState(0);
@@ -50,10 +49,6 @@ function App() {
       futureSpecialTaskPoints +
       (useImprovedPass ? battlepassRules.premiumPoints : 0)
   ) / 10;
-  const improvedPassDeadline = seasonStart.add(28, "day");
-  const now = dayjs();
-  const improvedPassAvailable =
-    !now.isBefore(seasonStart) && now.isBefore(improvedPassDeadline);
   const possibleLevelWithPremium = possibleLevelsMedium + improvedPassLevels;
   const impliedPoints = loginPoints + challengePoints;
   const hasInputConflict = totalPoints < impliedPoints;
@@ -89,8 +84,8 @@ function App() {
         <div className="brand-lockup">
           <span className="brand-mark">WT</span>
           <div>
-            <p className="brand-name">Passhelper</p>
-            <p className="brand-subtitle">Do It Yourself / Battlepass Season 24</p>
+            <h1 className="brand-name">War Thunder Battle Pass Calculator</h1>
+            <p className="brand-subtitle">Season 24 progress planner</p>
           </div>
         </div>
         <div className="header-meta">
@@ -143,7 +138,6 @@ function App() {
             <div className="target-status">{rewardCheckState === "invalid" ? "CHECK INPUTS" : rewardCheckState === "unreachable" ? "NOT YET" : "YES"}</div>
             <p>{rewardCheckState === "invalid" ? "The entered progress is lower than the points implied by your logins and challenges." : rewardCheckState === "free" ? "Reachable without buying 15 levels." : rewardCheckState === "premium" ? "Reachable with the Improved Pass (+15 levels)." : `${level75Gap.toFixed(1)} levels still needed with the options currently selected.`}</p>
             <div className="target-comparison"><span>Without Improved Pass<strong>{possibleLevelsMedium} lvl</strong></span><span>With Improved Pass<strong>{possibleLevelWithPremium} lvl</strong></span></div>
-            {!improvedPassAvailable && <small className="premium-note">The Improved Pass purchase window closed after the first 28 days. Select it only if you already own it.</small>}
             <div className="target-date"><span>Season ends</span><strong>{lastDay.format("DD/MM/YYYY")}</strong></div>
           </div>
         </section>
