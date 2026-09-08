@@ -4,9 +4,6 @@ A practical calculator for War Thunder Battle Pass progress. Enter your current
 progress, login count, challenges and available special tasks to see which level
 is still reachable before the season ends.
 
-The app currently uses the official Season 24 “Do It Yourself” rules and can be
-adapted to future seasons by changing the end-date override.
-
 ## Development
 
 ```bash
