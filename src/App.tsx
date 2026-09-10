@@ -64,7 +64,14 @@ function App() {
     ? possibleLevelWithPremium
     : possibleLevelsMedium;
   const level75Gap = Math.max(75 - selectedLevel75Projection, 0);
-  const currentProgress = Math.min(Math.max(totalPoints / 1500, 0), 1) * 100;
+  const improvedPassProgress = useImprovedPass ? battlepassRules.premiumPoints : 0;
+  const displayedProgressTotal = totalPoints + improvedPassProgress;
+  const currentProgress = Math.min(Math.max(displayedProgressTotal / 1500, 0), 1) * 100;
+  const progressSourceTotal = loginPoints + challengePoints + otherPoints + improvedPassProgress;
+  const loginProgress = progressSourceTotal > 0 ? (loginPoints / progressSourceTotal) * 100 : 0;
+  const challengeProgress = progressSourceTotal > 0 ? (challengePoints / progressSourceTotal) * 100 : 0;
+  const taskProgress = progressSourceTotal > 0 ? (otherPoints / progressSourceTotal) * 100 : 0;
+  const improvedPassProgressWidth = progressSourceTotal > 0 ? (improvedPassProgress / progressSourceTotal) * 100 : 0;
 
   const applyDeadline = () => {
     const selectedDate = dayjs(lastDayOverride);
@@ -164,12 +171,20 @@ function App() {
           <div className="details-panel">
             <div className="zone-heading compact-heading"><div><div><p className="section-label">Current points</p><h2>Progress breakdown</h2></div></div></div>
             <div className="breakdown-list">
-              <div><span>Logins</span><strong>{loginPoints} pts</strong></div>
-              <div><span>Challenges</span><strong>{challengePoints} pts</strong></div>
-              <div><span>Daily and special tasks</span><strong>{otherPoints} pts</strong></div>
-              <div className="breakdown-total"><span>Total progress</span><strong>{totalPoints} pts</strong></div>
+              <div className="breakdown-source breakdown-logins"><i /> <span>Logins</span><strong>{loginPoints} pts</strong></div>
+              <div className="breakdown-source breakdown-challenges"><i /> <span>Challenges</span><strong>{challengePoints} pts</strong></div>
+              <div className="breakdown-source breakdown-tasks"><i /> <span>Daily and special tasks</span><strong>{otherPoints} pts</strong></div>
+              {useImprovedPass && <div className="breakdown-source breakdown-improved-pass"><i /> <span>Improved Pass</span><strong>{improvedPassProgress} pts</strong></div>}
+              <div className="breakdown-total"><span>Total progress</span><strong>{displayedProgressTotal} pts</strong></div>
             </div>
-            <div className="current-progress"><span style={{ width: `${currentProgress}%` }} /></div>
+            <div className="progress-track">
+              <div className="current-progress" style={{ width: `${currentProgress}%` }}>
+                <span className="progress-segment progress-logins" data-tooltip={`${loginPoints} PP / ${(loginPoints / 10).toFixed(1)} levels`} style={{ width: `${loginProgress}%` }} />
+                <span className="progress-segment progress-challenges" data-tooltip={`${challengePoints} PP / ${(challengePoints / 10).toFixed(1)} levels`} style={{ width: `${challengeProgress}%` }} />
+                <span className="progress-segment progress-tasks" data-tooltip={`${otherPoints} PP / ${(otherPoints / 10).toFixed(1)} levels`} style={{ width: `${taskProgress}%` }} />
+                {useImprovedPass && <span className="progress-segment progress-improved-pass" data-tooltip={`${improvedPassProgress} PP / ${(improvedPassProgress / 10).toFixed(1)} levels`} style={{ width: `${improvedPassProgressWidth}%` }} />}
+              </div>
+            </div>
           </div>
           <div className="details-panel rules-panel">
             <p className="section-label">Rules</p>

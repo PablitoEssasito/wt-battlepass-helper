@@ -404,8 +404,7 @@ body {
   overflow: hidden;
 }
 
-.result-progress span,
-.current-progress span {
+.result-progress span {
   background: var(--accent);
   display: block;
   height: 100%;
@@ -642,6 +641,35 @@ body {
   padding: 10px 0;
 }
 
+.breakdown-list .breakdown-source {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: 3px 1fr auto;
+}
+
+.breakdown-source i {
+  align-self: stretch;
+  display: block;
+  min-height: 30px;
+  width: 3px;
+}
+
+.breakdown-logins i {
+  background: #5bc0be;
+}
+
+.breakdown-challenges i {
+  background: #ef7654;
+}
+
+.breakdown-tasks i {
+  background: #f3b64b;
+}
+
+.breakdown-improved-pass i {
+  background: #b48cff;
+}
+
 .breakdown-list strong {
   color: var(--ink);
 }
@@ -659,9 +687,68 @@ body {
 }
 
 .current-progress {
-  background: var(--line);
-  margin-top: 14px;
+  display: flex;
+  height: 100%;
+  margin-top: 0;
+  overflow: visible;
 }
+
+.progress-track {
+  background: var(--line);
+  border: 1px solid #46565c;
+  height: 9px;
+  margin-top: 14px;
+  overflow: visible;
+  position: relative;
+  width: 100%;
+}
+
+.current-progress .progress-segment {
+  display: block;
+  height: 100%;
+  position: relative;
+}
+
+.progress-logins {
+  background: #5bc0be;
+}
+
+.progress-challenges {
+  background: #ef7654;
+}
+
+.progress-tasks {
+  background: #f3b64b;
+}
+
+.progress-improved-pass {
+  background: #b48cff;
+}
+
+.progress-segment::after {
+  background: var(--night);
+  bottom: calc(100% + 10px);
+  color: var(--ink);
+  content: attr(data-tooltip);
+  font-size: 0.68rem;
+  font-weight: 700;
+  left: 50%;
+  opacity: 0;
+  padding: 7px 9px;
+  pointer-events: none;
+  position: absolute;
+  transform: translate(-50%, 4px);
+  transition: opacity 150ms ease, transform 150ms ease;
+  white-space: nowrap;
+  z-index: 2;
+}
+
+.progress-segment:hover::after,
+.progress-segment:focus-visible::after {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
 
 .rules-panel h2 {
   margin-top: 6px;
