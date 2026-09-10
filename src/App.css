@@ -462,6 +462,11 @@ body {
   white-space: nowrap;
 }
 
+.target-panel.reward-invalid .target-status {
+  font-size: clamp(2.25rem, 10cqw, 4rem);
+  white-space: nowrap;
+}
+
 .target-panel p {
   color: #aec9c0;
   font-size: 0.88rem;
