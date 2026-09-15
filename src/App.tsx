@@ -32,6 +32,7 @@ function App() {
     currentLevel,
     loginPoints,
     challengePoints,
+    passPoints,
     otherPoints,
     possibleLevelsAllTasks,
     possibleLevelsWithPass,
@@ -96,13 +97,12 @@ function App() {
       : tempoState === "tight"
       ? `Easy and medium tasks are not enough — ${(requiredPointsPerDay - dailyTaskCeiling).toFixed(1)} PP/day has to come from your special task pool.`
       : `Beyond your ceiling of ${maxPointsPerDay.toFixed(1)} PP/day, even using every special task you have.`;
-  const progressSourceTotal = loginPoints + challengePoints + otherPoints;
-  const loginProgress = progressSourceTotal > 0 ? (loginPoints / progressSourceTotal) * 100 : 0;
-  const challengeProgress = progressSourceTotal > 0 ? (challengePoints / progressSourceTotal) * 100 : 0;
-  const taskProgress = progressSourceTotal > 0 ? (otherPoints / progressSourceTotal) * 100 : 0;
+  const progressSourceTotal = loginPoints + challengePoints + passPoints + otherPoints;
+  const share = (points: number) => (progressSourceTotal > 0 ? (points / progressSourceTotal) * 100 : 0);
   const milestoneNote = milestones.find((milestone) => milestone.note)?.note;
   const waterfall = [
-    { label: "Logins only", value: contributions.logins, lead: true },
+    { label: "Current level", value: contributions.current, lead: true },
+    { label: "+ remaining logins", value: contributions.logins },
     { label: "+ easy tasks", value: contributions.easy },
     { label: "+ medium tasks", value: contributions.medium },
     { label: "+ special pool", value: contributions.special },
@@ -179,7 +179,7 @@ function App() {
               </button>
             ))}
           </div>
-          {hasInputConflict && <p className="input-warning">Current progress is lower than the points implied by your logins and challenges. Check the values before relying on the forecast.</p>}
+          {hasInputConflict && <p className="input-warning">Your level is lower than the points your logins, challenges{passPoints > 0 ? " and Improved Pass" : ""} already account for. Check the values before relying on the forecast.</p>}
         </section>
 
         <section className="finish-zone" aria-labelledby="finish-heading">
@@ -374,13 +374,15 @@ function App() {
             <div className="breakdown-list">
               <div className="breakdown-source breakdown-logins"><i /> <span>Logins</span><strong>{loginPoints} pts</strong></div>
               <div className="breakdown-source breakdown-challenges"><i /> <span>Challenges</span><strong>{challengePoints} pts</strong></div>
+              {passPoints > 0 && <div className="breakdown-source breakdown-pass"><i /> <span>Improved Pass</span><strong>{passPoints} pts</strong></div>}
               <div className="breakdown-source breakdown-tasks"><i /> <span>Daily and special tasks</span><strong>{otherPoints} pts</strong></div>
             </div>
             <div className="progress-track">
               <div className="current-progress" style={{ width: `${currentProgress}%` }}>
-                <span className="progress-segment progress-logins" data-tooltip={`${loginPoints} PP / ${(loginPoints / 10).toFixed(1)} levels`} style={{ width: `${loginProgress}%` }} />
-                <span className="progress-segment progress-challenges" data-tooltip={`${challengePoints} PP / ${(challengePoints / 10).toFixed(1)} levels`} style={{ width: `${challengeProgress}%` }} />
-                <span className="progress-segment progress-tasks" data-tooltip={`${otherPoints} PP / ${(otherPoints / 10).toFixed(1)} levels`} style={{ width: `${taskProgress}%` }} />
+                <span className="progress-segment progress-logins" data-tooltip={`${loginPoints} PP / ${(loginPoints / 10).toFixed(1)} levels`} style={{ width: `${share(loginPoints)}%` }} />
+                <span className="progress-segment progress-challenges" data-tooltip={`${challengePoints} PP / ${(challengePoints / 10).toFixed(1)} levels`} style={{ width: `${share(challengePoints)}%` }} />
+                {passPoints > 0 && <span className="progress-segment progress-pass" data-tooltip={`${passPoints} PP / ${(passPoints / 10).toFixed(1)} levels`} style={{ width: `${share(passPoints)}%` }} />}
+                <span className="progress-segment progress-tasks" data-tooltip={`${otherPoints} PP / ${(otherPoints / 10).toFixed(1)} levels`} style={{ width: `${share(otherPoints)}%` }} />
               </div>
             </div>
           </div>

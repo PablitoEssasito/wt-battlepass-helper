@@ -49,7 +49,11 @@ export const buildForecast = ({
   const currentLevel = totalPoints / 10;
   const loginPoints = pointsFromLogins(loginCount);
   const challengePoints = pointsFromChallenges(challengeCount);
-  const otherPoints = Math.max(totalPoints - loginPoints - challengePoints, 0);
+  // An owned Improved Pass put 15 levels into the entered level; they are not grind.
+  const passPoints =
+    passOwned === "improved" ? battlepassRules.premiumPoints : 0;
+  const accountedPoints = loginPoints + challengePoints + passPoints;
+  const otherPoints = Math.max(totalPoints - accountedPoints, 0);
 
   const easyPoints = daysRemaining * battlepassRules.easyTaskPoints;
   const mediumPoints = daysRemaining * battlepassRules.mediumTaskPoints;
@@ -93,9 +97,10 @@ export const buildForecast = ({
   // Zero once the pass is owned, unavailable, or its levels fall past the cap.
   const improvedPassGain = possibleLevelsWithPass - possibleLevelsAllTasks;
 
-  // What each activity adds on top of the one before it, ending on the projected level.
+  // What each step adds on top of the one before it, ending on the projected level.
   const contributions = {
-    logins: possibleLevelsLogins,
+    current: currentLevel,
+    logins: toLevels(futureLoginPoints),
     easy: toLevels(easyPoints),
     medium: toLevels(mediumPoints),
     special: toLevels(futureSpecialTaskPoints),
@@ -118,7 +123,7 @@ export const buildForecast = ({
   const nextMilestone =
     milestones.find((milestone) => milestone.status !== "reached") ?? null;
 
-  const hasInputConflict = totalPoints < loginPoints + challengePoints;
+  const hasInputConflict = totalPoints < accountedPoints;
 
   const target =
     targetLevel ??
@@ -177,6 +182,7 @@ export const buildForecast = ({
     currentLevel,
     loginPoints,
     challengePoints,
+    passPoints,
     otherPoints,
     futureSpecialTaskPoints,
     possibleLevelsLogins,

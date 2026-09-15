@@ -67,10 +67,11 @@ test("the contributions add up to the projected level", () => {
   const forecast = buildForecast(
     input({ bpLevel: 62, levelProgress: 4, loginCount: 48, availableSpecialTasks: 6, daysRemaining: 36 })
   );
-  const { logins, easy, medium, special } = forecast.contributions;
+  const { current, logins, easy, medium, special } = forecast.contributions;
 
   expect(forecast.levelsLostToCap).toBe(0);
-  expect(logins + easy + medium + special).toBeCloseTo(
+  expect(current).toBe(forecast.currentLevel);
+  expect(current + logins + easy + medium + special).toBeCloseTo(
     forecast.possibleLevelsAllTasks,
     5
   );
@@ -80,15 +81,14 @@ test("the projection stops at the maximum level and reports what it lost", () =>
   const forecast = buildForecast(
     input({ bpLevel: 60, daysRemaining: 91, availableSpecialTasks: 91 })
   );
-  const { logins, easy, medium, special } = forecast.contributions;
+  const { current, logins, easy, medium, special } = forecast.contributions;
 
   expect(forecast.possibleLevelsAllTasks).toBe(battlepassRules.maxLevel);
   expect(forecast.levelsLostToCap).toBeCloseTo(26.2, 5);
   // The waterfall still reconciles once the overflow is taken off.
-  expect(logins + easy + medium + special - forecast.levelsLostToCap).toBeCloseTo(
-    forecast.possibleLevelsAllTasks,
-    5
-  );
+  expect(
+    current + logins + easy + medium + special - forecast.levelsLostToCap
+  ).toBeCloseTo(forecast.possibleLevelsAllTasks, 5);
 });
 
 test("the Improved Pass adds nothing once the projection already hits the cap", () => {
@@ -268,6 +268,29 @@ test("under seven levels short the plain Battle Pass route is cheaper", () => {
 
   expect(goldenEaglesForLevels(6)).toBeLessThan(upgrade);
   expect(goldenEaglesForLevels(7)).toBeGreaterThan(upgrade);
+});
+
+test("an owned Improved Pass is its own slice of current points, not task grind", () => {
+  const seed = { bpLevel: 62, loginCount: 48, daysRemaining: 36 };
+  const owner = buildForecast(input({ ...seed, passOwned: "improved" }));
+  const grinder = buildForecast(input({ ...seed, passOwned: "battle" }));
+
+  expect(owner.passPoints).toBe(150);
+  expect(grinder.passPoints).toBe(0);
+  // The same level, but 150 of it is a purchase rather than daily tasks.
+  expect(grinder.otherPoints - owner.otherPoints).toBe(150);
+  expect(owner.loginPoints + owner.passPoints + owner.otherPoints).toBe(
+    owner.totalPoints
+  );
+});
+
+test("a level below what the owned pass already granted is flagged", () => {
+  // The Improved Pass alone puts you at level 15, so level 10 cannot happen.
+  const impossible = buildForecast(input({ bpLevel: 10, passOwned: "improved" }));
+  const fine = buildForecast(input({ bpLevel: 15, passOwned: "improved" }));
+
+  expect(impossible.hasInputConflict).toBe(true);
+  expect(fine.hasInputConflict).toBe(false);
 });
 
 test("progress below the points implied by logins and challenges is flagged", () => {

@@ -7,6 +7,15 @@ export interface ChangelogEntry {
 // Newest first.
 export const changelog: ChangelogEntry[] = [
   {
+    version: "1.3.3",
+    date: "2026-09-15",
+    changes: [
+      "An owned Improved Pass is now its own line in the progress breakdown. Its 150 points were being counted as daily and special task grind, overstating that line by 15 levels.",
+      "The input check now catches a level lower than the pass you own already granted, such as level 10 with the Improved Pass.",
+      "Split the first line of the contribution breakdown, which read \"Logins only\" while actually showing your current level plus the logins still to come.",
+    ],
+  },
+  {
     version: "1.3.2",
     date: "2026-09-15",
     changes: [
