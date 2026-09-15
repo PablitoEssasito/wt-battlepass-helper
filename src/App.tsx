@@ -36,6 +36,7 @@ function App() {
     possibleLevelsAllTasks,
     possibleLevelsWithPass,
     improvedPassGain,
+    levelsLostToCap,
     contributions,
     milestones,
     nextMilestone,
@@ -352,6 +353,12 @@ function App() {
                   <dd>{row.lead ? row.value.toFixed(1) : `+${row.value.toFixed(1)}`}</dd>
                 </div>
               ))}
+              {levelsLostToCap > 0 && (
+                <div className="waterfall-capped">
+                  <dt>Past the level {battlepassRules.maxLevel} cap</dt>
+                  <dd>&minus;{levelsLostToCap.toFixed(1)}</dd>
+                </div>
+              )}
               <div className="waterfall-total">
                 <dt>Projected finish</dt>
                 <dd>{possibleLevelsAllTasks.toFixed(1)}</dd>

@@ -825,6 +825,11 @@ body {
   margin: 0;
 }
 
+.waterfall-capped dt,
+.waterfall-capped dd {
+  color: var(--muted);
+}
+
 .waterfall-total {
   border-bottom: 0 !important;
   padding-top: 14px !important;

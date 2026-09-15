@@ -69,10 +69,35 @@ test("the contributions add up to the projected level", () => {
   );
   const { logins, easy, medium, special } = forecast.contributions;
 
+  expect(forecast.levelsLostToCap).toBe(0);
   expect(logins + easy + medium + special).toBeCloseTo(
     forecast.possibleLevelsAllTasks,
     5
   );
+});
+
+test("the projection stops at the maximum level and reports what it lost", () => {
+  const forecast = buildForecast(
+    input({ bpLevel: 60, daysRemaining: 91, availableSpecialTasks: 91 })
+  );
+  const { logins, easy, medium, special } = forecast.contributions;
+
+  expect(forecast.possibleLevelsAllTasks).toBe(battlepassRules.maxLevel);
+  expect(forecast.levelsLostToCap).toBeCloseTo(26.2, 5);
+  // The waterfall still reconciles once the overflow is taken off.
+  expect(logins + easy + medium + special - forecast.levelsLostToCap).toBeCloseTo(
+    forecast.possibleLevelsAllTasks,
+    5
+  );
+});
+
+test("the Improved Pass adds nothing once the projection already hits the cap", () => {
+  const forecast = buildForecast(
+    input({ bpLevel: 60, daysRemaining: 91, availableSpecialTasks: 91, passOwned: "none" })
+  );
+
+  expect(forecast.possibleLevelsWithPass).toBe(battlepassRules.maxLevel);
+  expect(forecast.improvedPassGain).toBe(0);
 });
 
 test("the Improved Pass only adds levels to someone who can still buy it", () => {

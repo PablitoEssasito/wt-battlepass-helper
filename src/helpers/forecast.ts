@@ -73,12 +73,25 @@ export const buildForecast = ({
   const possibleLevelsLogins = toLevels(withLogins);
   const possibleLevelsEasy = toLevels(withEasy);
   const possibleLevelsMedium = toLevels(withMedium);
-  const possibleLevelsAllTasks = toLevels(withMedium + futureSpecialTaskPoints);
+  // A full season of grinding is worth more than the pass has levels to give.
+  const uncappedProjection = toLevels(withMedium + futureSpecialTaskPoints);
+  const possibleLevelsAllTasks = Math.min(
+    uncappedProjection,
+    battlepassRules.maxLevel
+  );
+  const levelsLostToCap =
+    Math.round((uncappedProjection - possibleLevelsAllTasks) * 10) / 10;
+
   // Only a player without a pass can still gain these levels: an Improved Pass owner
   // already has them inside the level they entered, and a Battle Pass owner cannot add it.
-  const improvedPassGain =
+  const buyablePassLevels =
     passOwned === "none" ? battlepassRules.premiumPoints / 10 : 0;
-  const possibleLevelsWithPass = possibleLevelsAllTasks + improvedPassGain;
+  const possibleLevelsWithPass = Math.min(
+    possibleLevelsAllTasks + buyablePassLevels,
+    battlepassRules.maxLevel
+  );
+  // Zero once the pass is owned, unavailable, or its levels fall past the cap.
+  const improvedPassGain = possibleLevelsWithPass - possibleLevelsAllTasks;
 
   // What each activity adds on top of the one before it, ending on the projected level.
   const contributions = {
@@ -172,6 +185,7 @@ export const buildForecast = ({
     possibleLevelsAllTasks,
     possibleLevelsWithPass,
     improvedPassGain,
+    levelsLostToCap,
     contributions,
     milestones,
     nextMilestone,

@@ -7,6 +7,14 @@ export interface ChangelogEntry {
 // Newest first.
 export const changelog: ChangelogEntry[] = [
   {
+    version: "1.3.2",
+    date: "2026-09-15",
+    changes: [
+      "Fixed the projected finish running past level 150. A full season of grinding is worth more points than the pass has levels, so an early start could be told it would finish at 176.",
+      "The breakdown of what gets you there now shows how many levels fall past the cap, so its figures still add up to the projection.",
+    ],
+  },
+  {
     version: "1.3.1",
     date: "2026-09-15",
     changes: [
