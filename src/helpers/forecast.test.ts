@@ -169,18 +169,40 @@ test("a reachable target needs no bought levels", () => {
   expect(forecast.levelsToBuy).toBe(0);
 });
 
-test("the buyout rounds the gap up and prices both routes", () => {
+test("the buyout rounds the gap up and prices both routes for a player with no pass", () => {
   const forecast = buildForecast(
     input({ bpLevel: 60, loginCount: 30, daysRemaining: 36, availableSpecialTasks: 20, targetLevel: 125 })
   );
 
   // 27.1 levels short rounds up to 28.
   expect(forecast.levelsToBuy).toBe(28);
-  expect(forecast.buyDirectCost).toBe(1125 + 1250 + 3 * 175);
-  // The Pass replaces the first 15 levels; the other 13 still start at tier two.
+  expect(forecast.withBattlePassCost).toBe(2000 + 1125 + 1250 + 3 * 175);
+  // The Improved Pass covers the first 15; the other 13 still start at tier two.
   expect(forecast.levelsAfterPass).toBe(13);
-  expect(forecast.buyWithPassCost).toBe(500 + 10 * 125 + 3 * 175);
-  expect(forecast.cheaperWithPass).toBe(true);
+  expect(forecast.withImprovedCost).toBe(2500 + 10 * 125 + 3 * 175);
+  expect(forecast.cheaperWithImproved).toBe(true);
+});
+
+test("owning the Battle Pass rules out the Improved one, leaving manual levels", () => {
+  const forecast = buildForecast(
+    input({ bpLevel: 60, loginCount: 30, daysRemaining: 36, targetLevel: 125, passOwned: "battle" })
+  );
+
+  expect(forecast.manualCost).toBe(goldenEaglesForLevels(forecast.levelsToBuy));
+});
+
+test("owning the Improved Pass prices further levels from the sixteenth", () => {
+  const owned = buildForecast(
+    input({ bpLevel: 60, loginCount: 30, daysRemaining: 36, targetLevel: 125, passOwned: "improved" })
+  );
+  const plain = buildForecast(
+    input({ bpLevel: 60, loginCount: 30, daysRemaining: 36, targetLevel: 125, passOwned: "battle" })
+  );
+
+  // Same levels to buy, but the Improved Pass owner has already used up the cheapest tier.
+  expect(owned.levelsToBuy).toBe(plain.levelsToBuy);
+  expect(owned.manualCost).toBeGreaterThan(plain.manualCost);
+  expect(owned.manualCost).toBe(goldenEaglesForLevels(owned.levelsToBuy, 15));
 });
 
 test("past fifteen levels the Improved Pass always saves the same 625 GE", () => {
@@ -190,16 +212,16 @@ test("past fifteen levels the Improved Pass always saves the same 625 GE", () =>
     );
 
     expect(forecast.levelsToBuy).toBeGreaterThan(15);
-    expect(forecast.buyDirectCost - forecast.buyWithPassCost).toBe(625);
+    expect(forecast.withBattlePassCost - forecast.withImprovedCost).toBe(625);
   }
 });
 
-test("under seven levels short it is cheaper to skip the Improved Pass", () => {
-  const sixLevels = goldenEaglesForLevels(6);
-  const sevenLevels = goldenEaglesForLevels(7);
+test("under seven levels short the plain Battle Pass route is cheaper", () => {
+  const upgrade =
+    battlepassRules.improvedPassCost - battlepassRules.battlePassCost;
 
-  expect(sixLevels).toBeLessThan(battlepassRules.premiumCost);
-  expect(sevenLevels).toBeGreaterThan(battlepassRules.premiumCost);
+  expect(goldenEaglesForLevels(6)).toBeLessThan(upgrade);
+  expect(goldenEaglesForLevels(7)).toBeGreaterThan(upgrade);
 });
 
 test("progress below the points implied by logins and challenges is flagged", () => {

@@ -18,6 +18,9 @@ export interface MilestoneProjection extends SeasonMilestone {
   gap: number;
 }
 
+/** Which pass the player already owns, which decides how levels can be bought. */
+export type PassOwned = "none" | "battle" | "improved";
+
 export interface ForecastInput {
   bpLevel: number;
   levelProgress: number;
@@ -25,6 +28,7 @@ export interface ForecastInput {
   challengeCount: number;
   availableSpecialTasks: number;
   daysRemaining: number;
+  passOwned?: PassOwned;
   /** Defaults to the milestone flagged primary — the level most players aim for. */
   targetLevel?: number;
 }
@@ -39,6 +43,7 @@ export const buildForecast = ({
   availableSpecialTasks,
   daysRemaining,
   targetLevel,
+  passOwned = "none",
 }: ForecastInput) => {
   const totalPoints = bpLevel * 10 + levelProgress;
   const currentLevel = totalPoints / 10;
@@ -133,21 +138,25 @@ export const buildForecast = ({
   // What it costs to buy the levels the grind will not reach.
   const passLevels = battlepassRules.premiumPoints / 10;
   const levelsToBuy = Math.max(Math.ceil(-targetMargin), 0);
-  const buyDirectCost = goldenEaglesForLevels(levelsToBuy);
+  // Owning the Improved Pass counts as 15 bought levels, so the next one costs more.
+  const boughtBefore = passOwned === "improved" ? passLevels : 0;
+  const manualCost = goldenEaglesForLevels(levelsToBuy, boughtBefore);
   const levelsAfterPass = Math.max(levelsToBuy - passLevels, 0);
-  // The Pass counts as 15 bought levels, so anything after it starts at a higher tier.
-  const buyWithPassCost =
-    battlepassRules.premiumCost +
+  const withBattlePassCost = battlepassRules.battlePassCost + manualCost;
+  const withImprovedCost =
+    battlepassRules.improvedPassCost +
     goldenEaglesForLevels(levelsAfterPass, passLevels);
-  const cheaperWithPass = buyWithPassCost < buyDirectCost;
+  const cheaperWithImproved = withImprovedCost < withBattlePassCost;
 
   return {
+    passOwned,
     passLevels,
     levelsToBuy,
-    buyDirectCost,
     levelsAfterPass,
-    buyWithPassCost,
-    cheaperWithPass,
+    manualCost,
+    withBattlePassCost,
+    withImprovedCost,
+    cheaperWithImproved,
     totalPoints,
     currentLevel,
     loginPoints,

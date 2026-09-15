@@ -698,11 +698,51 @@ body {
   white-space: nowrap;
 }
 
+.pass-picker {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.pass-picker > span {
+  color: var(--muted);
+  font-size: var(--fs-small);
+  margin-right: 2px;
+}
+
+.pass-picker button {
+  background: none;
+  border: 1px solid var(--line);
+  color: var(--muted);
+  cursor: pointer;
+  font-family: inherit;
+  font-size: var(--fs-small);
+  padding: 5px 10px;
+}
+
+.pass-picker button:hover {
+  border-color: var(--muted);
+  color: var(--ink);
+}
+
+.pass-picker button.is-owned {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: var(--tempo);
+  color: var(--ink);
+  font-weight: 700;
+}
+
 .buyout-options {
   display: grid;
   gap: 12px;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   margin-top: 14px;
+}
+
+.buyout-options.buyout-single {
+  grid-template-columns: 1fr;
 }
 
 .buyout-option {

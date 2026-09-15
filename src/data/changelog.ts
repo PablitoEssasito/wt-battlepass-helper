@@ -7,6 +7,17 @@ export interface ChangelogEntry {
 // Newest first.
 export const changelog: ChangelogEntry[] = [
   {
+    version: "1.3.0",
+    date: "2026-09-15",
+    changes: [
+      "The Golden Eagle estimate now asks which pass you already own, because that decides what you can buy at all.",
+      "Fixed the estimate offering the Improved Pass to players who already had it — its 15 levels are part of the level you enter, so they cannot be bought twice.",
+      "Fixed the estimate offering the Improved Pass to Battle Pass owners, who can no longer add it and have to buy levels one at a time.",
+      "Fixed Improved Pass owners being quoted the cheapest level price. Those 15 levels count as bought, so the next one costs 125 GE rather than 75.",
+      "Corrected the pass prices: 2000 GE for the Battle Pass and 2500 GE for the Improved one, which makes its 15 levels a 500 GE upgrade.",
+    ],
+  },
+  {
     version: "1.2.0",
     date: "2026-09-15",
     changes: [

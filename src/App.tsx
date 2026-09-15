@@ -6,7 +6,7 @@ import NumberInput from "./components/NumberInput";
 import DateInput from "./components/DateInput";
 import ChangelogDialog from "./components/ChangelogDialog";
 import PointValuesDialog from "./components/PointValuesDialog";
-import { buildForecast } from "./helpers/forecast";
+import { buildForecast, PassOwned } from "./helpers/forecast";
 import { battlepassRules } from "./data/battlepassRules";
 import { season } from "./data/season";
 
@@ -20,6 +20,7 @@ function App() {
   const [lastDayOverride, setLastDayOverride] = useState(originalLastDay.format("YYYY-MM-DD"));
   const [lastDay, setLastDay] = useState(originalLastDay);
   const [pickedTarget, setPickedTarget] = useState<number | null>(null);
+  const [passOwned, setPassOwned] = useState<PassOwned>("none");
 
   // Today's tasks count as already done, so the window runs from tomorrow to the last day inclusive.
   const daysRemaining = Math.max(
@@ -40,10 +41,11 @@ function App() {
     hasInputConflict,
     passLevels,
     levelsToBuy,
-    buyDirectCost,
     levelsAfterPass,
-    buyWithPassCost,
-    cheaperWithPass,
+    manualCost,
+    withBattlePassCost,
+    withImprovedCost,
+    cheaperWithImproved,
     targetLevel,
     levelsToTarget,
     targetMargin,
@@ -60,7 +62,20 @@ function App() {
     availableSpecialTasks,
     daysRemaining,
     targetLevel: pickedTarget ?? undefined,
+    passOwned,
   });
+  const passOptions: { id: PassOwned; label: string }[] = [
+    { id: "none", label: "Nothing yet" },
+    { id: "battle", label: "Battle Pass" },
+    { id: "improved", label: "Improved Pass" },
+  ];
+  const ge = (amount: number) => `${amount.toLocaleString("en-US")} GE`;
+  const buyoutNote =
+    passOwned === "none"
+      ? "Levels can only be bought once you own a pass, so both routes include one."
+      : passOwned === "improved"
+      ? `Its ${passLevels} levels are already part of the level you entered. They also count as bought levels, so anything further starts at a higher rate.`
+      : "The Improved Pass cannot be added once you own the Battle Pass, so the levels have to be bought one at a time.";
   const maxPoints = battlepassRules.maxLevel * 10;
   const trackPercent = (level: number) =>
     Math.min(Math.max(level / battlepassRules.maxLevel, 0), 1) * 100;
@@ -280,19 +295,43 @@ function App() {
                   <h4>Closing the gap with Golden Eagles</h4>
                   <span>{levelsToBuy} {levelsToBuy === 1 ? "level" : "levels"} to buy</span>
                 </div>
-                <div className="buyout-options">
-                  <div className={`buyout-option${cheaperWithPass ? "" : " is-cheaper"}`}>
-                    <span>Levels only</span>
-                    <strong>{buyDirectCost.toLocaleString("en-US")} GE</strong>
-                    <small>{levelsToBuy} bought levels</small>
-                  </div>
-                  <div className={`buyout-option${cheaperWithPass ? " is-cheaper" : ""}`}>
-                    <span>Improved Pass {levelsAfterPass > 0 ? "+ levels" : "only"}</span>
-                    <strong>{buyWithPassCost.toLocaleString("en-US")} GE</strong>
-                    <small>{battlepassRules.premiumCost} GE for {passLevels} levels{levelsAfterPass > 0 ? ` + ${levelsAfterPass} bought` : ""}</small>
-                  </div>
+                <div className="pass-picker" role="group" aria-label="Pass you already own">
+                  <span>I own</span>
+                  {passOptions.map((option) => (
+                    <button
+                      key={option.id}
+                      type="button"
+                      className={option.id === passOwned ? "is-owned" : ""}
+                      aria-pressed={option.id === passOwned}
+                      onClick={() => setPassOwned(option.id)}
+                    >
+                      {option.label}
+                    </button>
+                  ))}
                 </div>
-                <p className="buyout-note">Buying levels requires owning a Battle Pass, and the Improved Pass counts as {passLevels} bought levels, so anything on top of it starts at a higher rate.</p>
+                {passOwned === "none" ? (
+                  <div className="buyout-options">
+                    <div className={`buyout-option${cheaperWithImproved ? "" : " is-cheaper"}`}>
+                      <span>Battle Pass + levels</span>
+                      <strong>{ge(withBattlePassCost)}</strong>
+                      <small>{ge(battlepassRules.battlePassCost)} pass + {levelsToBuy} bought levels</small>
+                    </div>
+                    <div className={`buyout-option${cheaperWithImproved ? " is-cheaper" : ""}`}>
+                      <span>Improved Pass {levelsAfterPass > 0 ? "+ levels" : "only"}</span>
+                      <strong>{ge(withImprovedCost)}</strong>
+                      <small>{ge(battlepassRules.improvedPassCost)} pass, {passLevels} levels included{levelsAfterPass > 0 ? ` + ${levelsAfterPass} bought` : ""}</small>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="buyout-options buyout-single">
+                    <div className="buyout-option">
+                      <span>Levels only</span>
+                      <strong>{ge(manualCost)}</strong>
+                      <small>{levelsToBuy} bought levels{passOwned === "improved" ? `, priced from number ${passLevels + 1}` : ""}</small>
+                    </div>
+                  </div>
+                )}
+                <p className="buyout-note">{buyoutNote}</p>
               </div>
             )}
           </div>

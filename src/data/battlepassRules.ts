@@ -12,7 +12,9 @@ export const battlepassRules = {
   challengeBonusAfter: 14,
   challengeBonusPoints: 45,
   premiumPoints: 150,
-  premiumCost: 500,
+  battlePassCost: 2000,
+  // Includes the Battle Pass itself, so the 15 levels effectively cost 500 GE.
+  improvedPassCost: 2500,
   // Price per bought level rises with how many you have already bought this season.
   levelPriceTiers: [
     { boughtBelow: 15, price: 75 },
