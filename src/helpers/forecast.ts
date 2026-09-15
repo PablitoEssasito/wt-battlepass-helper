@@ -57,11 +57,10 @@ export const buildForecast = ({
 
   const easyPoints = daysRemaining * battlepassRules.easyTaskPoints;
   const mediumPoints = daysRemaining * battlepassRules.mediumTaskPoints;
+  // Special tasks have no daily limit, so the whole pool can be cleared in the time left.
   const futureSpecialTaskPoints =
-    Math.min(
-      daysRemaining > 0 ? availableSpecialTasks : 0,
-      battlepassRules.maxSpecialTasks
-    ) * battlepassRules.specialTaskPoints;
+    (daysRemaining > 0 ? Math.max(availableSpecialTasks, 0) : 0) *
+    battlepassRules.specialTaskPoints;
 
   const remainingLoginSlots = Math.max(
     Math.min(daysRemaining, battlepassRules.totalDays - loginCount),

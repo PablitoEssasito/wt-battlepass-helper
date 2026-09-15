@@ -157,7 +157,7 @@ function App() {
             <NumberInput label="Points to next level" callback={setLevelProgress} value={levelProgress.toString()} min={0} max={9} />
             <NumberInput label="Season logins" callback={setLoginCount} value={loginCount.toString()} min={0} max={battlepassRules.totalDays} />
             <NumberInput label="Challenges completed" callback={setChallengeCount} value={challengeCount.toString()} min={0} max={battlepassRules.challengeBonusAfter} />
-            <NumberInput label="Special tasks available" callback={setAvailableSpecialTasks} value={availableSpecialTasks.toString()} min={0} max={battlepassRules.maxSpecialTasks} />
+            <NumberInput label="Special tasks available" callback={setAvailableSpecialTasks} value={availableSpecialTasks.toString()} min={0} />
             <div className="deadline-input">
               <DateInput label="Season ends" callback={setLastDayOverride} value={lastDayOverride} />
               <button className="text-button" type="button" onClick={applyDeadline}>Apply date</button>

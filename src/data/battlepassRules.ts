@@ -7,7 +7,6 @@ export const battlepassRules = {
   easyTaskPoints: 2,
   mediumTaskPoints: 3,
   specialTaskPoints: 5,
-  maxSpecialTasks: 91,
   challengePoints: 30,
   challengeBonusAfter: 14,
   challengeBonusPoints: 45,

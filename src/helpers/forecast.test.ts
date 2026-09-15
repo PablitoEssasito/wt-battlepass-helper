@@ -54,6 +54,15 @@ test("a full season of logins is worth the documented 252 points", () => {
   expect(forecast.possibleLevelsLogins).toBe(25.2);
 });
 
+test("a special task pool larger than the season still counts in full", () => {
+  const forecast = buildForecast(
+    input({ bpLevel: 20, daysRemaining: 5, availableSpecialTasks: 200 })
+  );
+
+  // No daily limit, so 200 tasks are all reachable in the days that remain.
+  expect(forecast.futureSpecialTaskPoints).toBe(200 * battlepassRules.specialTaskPoints);
+});
+
 test("special tasks only move the all-tasks scenario", () => {
   const forecast = buildForecast(
     input({ bpLevel: 50, daysRemaining: 5, availableSpecialTasks: 10 })

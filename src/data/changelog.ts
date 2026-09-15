@@ -7,6 +7,13 @@ export interface ChangelogEntry {
 // Newest first.
 export const changelog: ChangelogEntry[] = [
   {
+    version: "1.3.4",
+    date: "2026-09-15",
+    changes: [
+      "Removed the cap of 91 special tasks. There is no daily limit on them, so the whole pool you hold now counts however large it is and however few days remain.",
+    ],
+  },
+  {
     version: "1.3.3",
     date: "2026-09-15",
     changes: [
