@@ -97,10 +97,11 @@ test("a short milestone reports the gap against the free projection", () => {
   expect(level125?.gap).toBeCloseTo(27.1, 5);
 });
 
-test("the target defaults to the first milestone still ahead", () => {
-  const forecast = buildForecast(input({ bpLevel: 60, loginCount: 30, daysRemaining: 36 }));
+test("the target defaults to the primary milestone, not the nearest one", () => {
+  // Level 51 is the next one ahead, but almost everyone plays towards 75.
+  const forecast = buildForecast(input({ bpLevel: 20, loginCount: 30, daysRemaining: 36 }));
 
-  expect(forecast.nextMilestone?.level).toBe(75);
+  expect(forecast.nextMilestone?.level).toBe(51);
   expect(forecast.targetLevel).toBe(75);
 });
 

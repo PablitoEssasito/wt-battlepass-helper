@@ -25,7 +25,7 @@ export interface ForecastInput {
   challengeCount: number;
   availableSpecialTasks: number;
   daysRemaining: number;
-  /** Defaults to the first milestone the player has not reached yet. */
+  /** Defaults to the milestone flagged primary — the level most players aim for. */
   targetLevel?: number;
 }
 
@@ -99,7 +99,11 @@ export const buildForecast = ({
 
   const hasInputConflict = totalPoints < loginPoints + challengePoints;
 
-  const target = targetLevel ?? nextMilestone?.level ?? battlepassRules.maxLevel;
+  const target =
+    targetLevel ??
+    seasonMilestones.find((milestone) => milestone.primary)?.level ??
+    nextMilestone?.level ??
+    battlepassRules.maxLevel;
   const levelsToTarget = Math.max(target - currentLevel, 0);
   const targetMargin = possibleLevelsAllTasks - target;
 

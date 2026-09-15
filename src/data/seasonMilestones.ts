@@ -2,12 +2,14 @@ export interface SeasonMilestone {
   level: number;
   label: string;
   note?: string;
+  /** The level most players aim for. Used as the default target. */
+  primary?: boolean;
 }
 
 // Rewards move every season — update this list, not the components.
 export const seasonMilestones: SeasonMilestone[] = [
   { level: 51, label: "Premium vehicle" },
-  { level: 75, label: "Main season reward" },
+  { level: 75, label: "Main season reward", primary: true },
   { level: 100, label: "Loading screen" },
   { level: 105, label: "Upgrade coupon 1 of 2" },
   {

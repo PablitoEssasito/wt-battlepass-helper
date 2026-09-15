@@ -8,10 +8,10 @@ import ChangelogDialog from "./components/ChangelogDialog";
 import PointValuesDialog from "./components/PointValuesDialog";
 import { buildForecast } from "./helpers/forecast";
 import { battlepassRules } from "./data/battlepassRules";
+import { season } from "./data/season";
 
 function App() {
-  const seasonEndDate = "2026-10-21";
-  const originalLastDay = dayjs(seasonEndDate);
+  const originalLastDay = dayjs(season.endDate);
   const [bpLevel, setBpLevel] = useState(0);
   const [levelProgress, setLevelProgress] = useState(0);
   const [loginCount, setLoginCount] = useState(0);
@@ -110,13 +110,19 @@ function App() {
           <span className="brand-mark">WT</span>
           <div>
             <h1 className="brand-name">War Thunder Battle Pass Calculator</h1>
-            <p className="brand-subtitle">Season 24 progress planner</p>
+            <p className="brand-subtitle">Season {season.number} · {season.name}</p>
           </div>
         </div>
-        <div className="header-meta">
-          <PointValuesDialog />
-          <ChangelogDialog />
-        </div>
+        <dl className="header-stats">
+          <div>
+            <dt>Ends</dt>
+            <dd>{lastDay.format("DD/MM/YYYY")}</dd>
+          </div>
+          <div>
+            <dt>Remaining</dt>
+            <dd>{daysRemaining} {daysRemaining === 1 ? "day" : "days"}</dd>
+          </div>
+        </dl>
       </header>
 
       <main className="workspace">
@@ -139,7 +145,7 @@ function App() {
               <DateInput label="Season ends" callback={setLastDayOverride} value={lastDayOverride} />
               <button className="text-button" type="button" onClick={applyDeadline}>Apply date</button>
               {lastDay.diff(originalLastDay, "day") !== 0 && <button className="text-button muted-button" type="button" onClick={resetDeadline}>Reset</button>}
-              <small className="known-deadline">Official Season 24 date: {originalLastDay.format("DD/MM/YYYY")}</small>
+              <small className="known-deadline">Official: {originalLastDay.format("DD/MM/YYYY")}</small>
             </div>
           </div>
           {hasInputConflict && <p className="input-warning">Current progress is lower than the points implied by your logins and challenges. Check the values before relying on the forecast.</p>}
@@ -153,7 +159,6 @@ function App() {
                 <h2 id="finish-heading">Where the season ends</h2>
               </div>
             </div>
-            <span className="input-hint">{daysRemaining} days left</span>
           </div>
           <div className="finish-figure">
             <strong>{possibleLevelsAllTasks.toFixed(1)}</strong>
@@ -226,9 +231,9 @@ function App() {
               <h3>Level {targetLevel} tempo</h3>
               <span>
                 {pickedTarget === null ? (
-                  "Next milestone"
+                  "Default target"
                 ) : (
-                  <button className="text-button muted-button" type="button" onClick={() => setPickedTarget(null)}>Back to next milestone</button>
+                  <button className="text-button muted-button" type="button" onClick={() => setPickedTarget(null)}>Back to default</button>
                 )}
               </span>
             </div>
@@ -334,7 +339,17 @@ function App() {
         </section>
       </main>
 
-      <footer className="site-footer"><span>Based on the <a href="https://github.com/Gardnem6/wt-passhelper" target="_blank" rel="noreferrer">original tool by Gardnem6</a></span><span>Season ends {lastDay.format("DD/MM/YYYY")}</span></footer>
+      <footer className="site-footer">
+        <p className="footer-credit">
+          Based on the <a href="https://github.com/Gardnem6/wt-passhelper" target="_blank" rel="noreferrer">original tool by Gardnem6</a>
+        </p>
+        <nav className="footer-meta">
+          <PointValuesDialog />
+          <ChangelogDialog />
+          <span className="footer-version">v{APP_VERSION}</span>
+          <a href="https://github.com/PablitoEssasito/wt-battlepass-helper" target="_blank" rel="noreferrer">Source on GitHub</a>
+        </nav>
+      </footer>
     </div>
   );
 }

@@ -7,6 +7,16 @@ export interface ChangelogEntry {
 // Newest first.
 export const changelog: ChangelogEntry[] = [
   {
+    version: "1.2.0",
+    date: "2026-09-15",
+    changes: [
+      "The default target is now level 75, the reward almost everyone plays towards, instead of whichever milestone happened to be nearest.",
+      "The header carries the season name and the two dates that change — the end date used to be repeated in three places.",
+      "Moved point values, the changelog and the version into the footer, where they read as links rather than stray labels in a row of data.",
+      "Season number, name and end date moved into a data file, so a new season no longer means editing a component.",
+    ],
+  },
+  {
     version: "1.1.0",
     date: "2026-09-15",
     changes: [

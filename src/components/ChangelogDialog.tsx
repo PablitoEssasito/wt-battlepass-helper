@@ -3,12 +3,7 @@ import { changelog } from "../data/changelog";
 
 function ChangelogDialog() {
   return (
-    <InfoDialog
-      triggerLabel={`v${APP_VERSION}`}
-      triggerClassName="version-button"
-      label="Changelog"
-      title="What changed"
-    >
+    <InfoDialog triggerLabel="Changelog" label="Changelog" title="What changed">
       <ol className="changelog-list">
         {changelog.map((entry) => (
           <li key={entry.version}>
