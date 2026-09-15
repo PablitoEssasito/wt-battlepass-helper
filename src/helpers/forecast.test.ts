@@ -63,6 +63,18 @@ test("special tasks only move the all-tasks scenario", () => {
   expect(forecast.possibleLevelsAllTasks - forecast.possibleLevelsMedium).toBeCloseTo(5, 5);
 });
 
+test("the contributions add up to the projected level", () => {
+  const forecast = buildForecast(
+    input({ bpLevel: 62, levelProgress: 4, loginCount: 48, availableSpecialTasks: 6, daysRemaining: 36 })
+  );
+  const { logins, easy, medium, special } = forecast.contributions;
+
+  expect(logins + easy + medium + special).toBeCloseTo(
+    forecast.possibleLevelsAllTasks,
+    5
+  );
+});
+
 test("milestones report every status from reached to out of reach", () => {
   const { milestones } = buildForecast(
     input({ bpLevel: 60, loginCount: 30, daysRemaining: 36, availableSpecialTasks: 20 })

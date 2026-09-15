@@ -72,6 +72,14 @@ export const buildForecast = ({
   const possibleLevelsWithPass =
     possibleLevelsAllTasks + battlepassRules.premiumPoints / 10;
 
+  // What each activity adds on top of the one before it, ending on the projected level.
+  const contributions = {
+    logins: possibleLevelsLogins,
+    easy: toLevels(easyPoints),
+    medium: toLevels(mediumPoints),
+    special: toLevels(futureSpecialTaskPoints),
+  };
+
   const milestones: MilestoneProjection[] = seasonMilestones.map(
     (milestone) => ({
       ...milestone,
@@ -147,6 +155,7 @@ export const buildForecast = ({
     possibleLevelsMedium,
     possibleLevelsAllTasks,
     possibleLevelsWithPass,
+    contributions,
     milestones,
     nextMilestone,
     hasInputConflict,
