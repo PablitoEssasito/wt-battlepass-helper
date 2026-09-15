@@ -13,3 +13,11 @@ test("full free-to-play grind reaches the documented maximum", () => {
 
   expect(totalPoints).toBe(1627);
 });
+
+test("the login bracket table has to end on the last day of the season", () => {
+  const lastBracket =
+    battlepassRules.loginBrackets[battlepassRules.loginBrackets.length - 1];
+
+  expect(lastBracket).toBe(battlepassRules.totalDays);
+  expect(battlepassRules.maxSpecialTasks).toBe(battlepassRules.totalDays);
+});
