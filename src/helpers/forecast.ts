@@ -18,6 +18,24 @@ export interface MilestoneProjection extends SeasonMilestone {
   gap: number;
 }
 
+/** The three projections a level is judged against. */
+export interface LevelOutlook {
+  currentLevel: number;
+  possibleLevelsAllTasks: number;
+  possibleLevelsWithPass: number;
+}
+
+export const projectLevel = (level: number, outlook: LevelOutlook) => ({
+  status: (outlook.currentLevel >= level
+    ? "reached"
+    : outlook.possibleLevelsAllTasks >= level
+    ? "onTrack"
+    : outlook.possibleLevelsWithPass >= level
+    ? "withPass"
+    : "short") as MilestoneStatus,
+  gap: Math.max(level - outlook.possibleLevelsAllTasks, 0),
+});
+
 /** Which pass the player already owns, which decides how levels can be bought. */
 export type PassOwned = "none" | "battle" | "improved";
 
@@ -105,19 +123,13 @@ export const buildForecast = ({
     special: toLevels(futureSpecialTaskPoints),
   };
 
+  const outlook: LevelOutlook = {
+    currentLevel,
+    possibleLevelsAllTasks,
+    possibleLevelsWithPass,
+  };
   const milestones: MilestoneProjection[] = seasonMilestones.map(
-    (milestone) => ({
-      ...milestone,
-      status:
-        currentLevel >= milestone.level
-          ? "reached"
-          : possibleLevelsAllTasks >= milestone.level
-          ? "onTrack"
-          : possibleLevelsWithPass >= milestone.level
-          ? "withPass"
-          : "short",
-      gap: Math.max(milestone.level - possibleLevelsAllTasks, 0),
-    })
+    (milestone) => ({ ...milestone, ...projectLevel(milestone.level, outlook) })
   );
   const nextMilestone =
     milestones.find((milestone) => milestone.status !== "reached") ?? null;
@@ -189,6 +201,7 @@ export const buildForecast = ({
     possibleLevelsMedium,
     possibleLevelsAllTasks,
     possibleLevelsWithPass,
+    outlook,
     improvedPassGain,
     levelsLostToCap,
     contributions,

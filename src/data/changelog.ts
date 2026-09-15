@@ -7,6 +7,13 @@ export interface ChangelogEntry {
 // Newest first.
 export const changelog: ChangelogEntry[] = [
   {
+    version: "1.4.0",
+    date: "2026-09-15",
+    changes: [
+      "Added a custom target to the milestone list, so you can aim at any level rather than only the six the season rewards.",
+    ],
+  },
+  {
     version: "1.3.4",
     date: "2026-09-15",
     changes: [

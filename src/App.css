@@ -537,6 +537,41 @@ body {
   letter-spacing: -0.02em;
 }
 
+.milestone-custom {
+  border-top: 1px solid var(--line);
+  cursor: default;
+  grid-template-columns: 64px minmax(0, 1fr) auto;
+  margin-top: 6px;
+  padding-top: 14px;
+}
+
+/* The spinner would cover a three digit level in a column this narrow. */
+.milestone-custom input::-webkit-outer-spin-button,
+.milestone-custom input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.milestone-custom input {
+  appearance: textfield;
+  background: #11191e;
+  border: 1px solid var(--line);
+  color: var(--ink);
+  font-family: inherit;
+  font-size: var(--fs-value);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  min-width: 0;
+  padding: 4px 6px;
+  text-align: center;
+  width: 100%;
+}
+
+.milestone-custom input:focus {
+  border-color: var(--accent);
+  outline: none;
+}
+
 .milestone-label {
   overflow: hidden;
   text-overflow: ellipsis;

@@ -6,7 +6,8 @@ import NumberInput from "./components/NumberInput";
 import DateInput from "./components/DateInput";
 import ChangelogDialog from "./components/ChangelogDialog";
 import PointValuesDialog from "./components/PointValuesDialog";
-import { buildForecast, PassOwned } from "./helpers/forecast";
+import { buildForecast, PassOwned, projectLevel } from "./helpers/forecast";
+import { setNumberInput } from "./helpers/setNumberInput";
 import { battlepassRules } from "./data/battlepassRules";
 import { season } from "./data/season";
 
@@ -21,6 +22,7 @@ function App() {
   const [lastDay, setLastDay] = useState(originalLastDay);
   const [pickedTarget, setPickedTarget] = useState<number | null>(null);
   const [passOwned, setPassOwned] = useState<PassOwned>("none");
+  const [customLevel, setCustomLevel] = useState(0);
 
   // Today's tasks count as already done, so the window runs from tomorrow to the last day inclusive.
   const daysRemaining = Math.max(
@@ -36,6 +38,7 @@ function App() {
     otherPoints,
     possibleLevelsAllTasks,
     possibleLevelsWithPass,
+    outlook,
     improvedPassGain,
     levelsLostToCap,
     contributions,
@@ -100,6 +103,12 @@ function App() {
   const progressSourceTotal = loginPoints + challengePoints + passPoints + otherPoints;
   const share = (points: number) => (progressSourceTotal > 0 ? (points / progressSourceTotal) * 100 : 0);
   const milestoneNote = milestones.find((milestone) => milestone.note)?.note;
+  const custom = customLevel > 0 ? projectLevel(customLevel, outlook) : null;
+  const pickCustomLevel = (value: string) =>
+    setNumberInput((level) => {
+      setCustomLevel(level);
+      if (level > 0) setPickedTarget(level);
+    }, value, 0, battlepassRules.maxLevel);
   const waterfall = [
     { label: "Current level", value: contributions.current, lead: true },
     { label: "+ remaining logins", value: contributions.logins },
@@ -254,6 +263,29 @@ function App() {
                   </button>
                 </li>
               ))}
+              <li>
+                <div className={`milestone-row milestone-custom${custom ? ` status-${custom.status}` : ""}${custom && customLevel === targetLevel ? " is-target" : ""}`}>
+                  <input
+                    type="number"
+                    min={0}
+                    max={battlepassRules.maxLevel}
+                    step={1}
+                    placeholder="—"
+                    aria-label="Custom target level"
+                    value={customLevel > 0 ? customLevel.toString() : ""}
+                    onChange={(event) => pickCustomLevel(event.target.value)}
+                    onFocus={() => customLevel > 0 && setPickedTarget(customLevel)}
+                  />
+                  <span className="milestone-label">Any level you like</span>
+                  <span className="milestone-status">
+                    {custom
+                      ? custom.status === "short"
+                        ? `${custom.gap.toFixed(1)} short`
+                        : milestoneStatusLabel[custom.status]
+                      : ""}
+                  </span>
+                </div>
+              </li>
             </ul>
             {milestoneNote && <p className="milestone-note">{milestoneNote}</p>}
           </div>

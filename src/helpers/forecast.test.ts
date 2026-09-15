@@ -1,6 +1,6 @@
 import { expect, test } from "vitest";
 import { battlepassRules } from "../data/battlepassRules";
-import { buildForecast, ForecastInput } from "./forecast";
+import { buildForecast, ForecastInput, projectLevel } from "./forecast";
 import { goldenEaglesForLevels } from "./goldenEaglesForLevels";
 
 const input = (overrides: Partial<ForecastInput> = {}): ForecastInput => ({
@@ -150,6 +150,29 @@ test("a short milestone reports the gap against the free projection", () => {
 
   expect(possibleLevelsAllTasks).toBe(97.9);
   expect(level125?.gap).toBeCloseTo(27.1, 5);
+});
+
+test("any level can be judged against the same outlook as a milestone", () => {
+  const forecast = buildForecast(
+    input({ bpLevel: 60, loginCount: 30, daysRemaining: 36, availableSpecialTasks: 20 })
+  );
+
+  // Projection is 97.9, and the Improved Pass could still add 15 on top.
+  expect(projectLevel(55, forecast.outlook).status).toBe("reached");
+  expect(projectLevel(90, forecast.outlook).status).toBe("onTrack");
+  expect(projectLevel(110, forecast.outlook).status).toBe("withPass");
+  expect(projectLevel(130, forecast.outlook).status).toBe("short");
+  expect(projectLevel(130, forecast.outlook).gap).toBeCloseTo(32.1, 5);
+});
+
+test("a custom level matching a milestone is judged identically", () => {
+  const forecast = buildForecast(
+    input({ bpLevel: 60, loginCount: 30, daysRemaining: 36, availableSpecialTasks: 20 })
+  );
+  const milestone = forecast.milestones.find((m) => m.level === 125);
+
+  expect(projectLevel(125, forecast.outlook).status).toBe(milestone?.status);
+  expect(projectLevel(125, forecast.outlook).gap).toBeCloseTo(milestone?.gap ?? -1, 5);
 });
 
 test("the target defaults to the primary milestone, not the nearest one", () => {
