@@ -7,6 +7,19 @@ export interface ChangelogEntry {
 // Newest first.
 export const changelog: ChangelogEntry[] = [
   {
+    version: "1.1.0",
+    date: "2026-09-15",
+    changes: [
+      "Rebuilt the page around one reading order: where you land, what that unlocks, what it takes to get there.",
+      "Merged the best case panel into the projected finish block, so the headline level is stated once instead of twice.",
+      "Replaced the forecast table with a breakdown of what each activity contributes, adding up to the projected level — the old table ended on a different number.",
+      "Moved point values into a dialog in the header, next to the changelog.",
+      "Cut the type scale from 24 improvised sizes to seven and raised the body text.",
+      "Fixed the tempo block leaving half a row empty whenever there was no daily quota to show.",
+      "Removed the LIVE CALCULATOR indicator.",
+    ],
+  },
+  {
     version: "1.0.0",
     date: "2026-09-15",
     changes: [

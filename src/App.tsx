@@ -5,7 +5,7 @@ import "./App.css";
 import NumberInput from "./components/NumberInput";
 import DateInput from "./components/DateInput";
 import ChangelogDialog from "./components/ChangelogDialog";
-import { pointsFromChallenges } from "./helpers/pointsFromChallenges";
+import PointValuesDialog from "./components/PointValuesDialog";
 import { buildForecast } from "./helpers/forecast";
 import { battlepassRules } from "./data/battlepassRules";
 
@@ -32,12 +32,9 @@ function App() {
     loginPoints,
     challengePoints,
     otherPoints,
-    futureSpecialTaskPoints,
-    possibleLevelsLogins,
-    possibleLevelsEasy,
-    possibleLevelsMedium,
     possibleLevelsAllTasks,
     possibleLevelsWithPass,
+    contributions,
     milestones,
     nextMilestone,
     hasInputConflict,
@@ -86,6 +83,13 @@ function App() {
   const loginProgress = progressSourceTotal > 0 ? (loginPoints / progressSourceTotal) * 100 : 0;
   const challengeProgress = progressSourceTotal > 0 ? (challengePoints / progressSourceTotal) * 100 : 0;
   const taskProgress = progressSourceTotal > 0 ? (otherPoints / progressSourceTotal) * 100 : 0;
+  const milestoneNote = milestones.find((milestone) => milestone.note)?.note;
+  const waterfall = [
+    { label: "Logins only", value: contributions.logins, lead: true },
+    { label: "+ easy tasks", value: contributions.easy },
+    { label: "+ medium tasks", value: contributions.medium },
+    { label: "+ special pool", value: contributions.special },
+  ];
 
   const applyDeadline = () => {
     const selectedDate = dayjs(lastDayOverride);
@@ -110,7 +114,7 @@ function App() {
           </div>
         </div>
         <div className="header-meta">
-          <span className="live-indicator">LIVE CALCULATOR</span>
+          <PointValuesDialog />
           <ChangelogDialog />
         </div>
       </header>
@@ -141,15 +145,22 @@ function App() {
           {hasInputConflict && <p className="input-warning">Current progress is lower than the points implied by your logins and challenges. Check the values before relying on the forecast.</p>}
         </section>
 
-        <section className="track-zone" aria-labelledby="track-heading">
+        <section className="finish-zone" aria-labelledby="finish-heading">
           <div className="zone-heading compact-heading">
             <div>
               <div>
-                <p className="section-label">Season track</p>
-                <h2 id="track-heading">Level {battlepassRules.maxLevel} ladder</h2>
+                <p className="section-label">Projected finish</p>
+                <h2 id="finish-heading">Where the season ends</h2>
               </div>
             </div>
             <span className="input-hint">{daysRemaining} days left</span>
+          </div>
+          <div className="finish-figure">
+            <strong>{possibleLevelsAllTasks.toFixed(1)}</strong>
+            <span>lvl</span>
+            <em>
+              {currentLevel.toFixed(1)} now <i>&rarr;</i> {possibleLevelsWithPass.toFixed(1)} with Improved Pass
+            </em>
           </div>
           <div className="track-scale" aria-hidden="true">
             {milestones.map((milestone) => (
@@ -165,9 +176,9 @@ function App() {
             ))}
           </div>
           <div className="track-legend">
-            <span className="legend-earned">Earned {currentLevel.toFixed(1)}</span>
-            <span className="legend-free">Projected {possibleLevelsAllTasks}</span>
-            <span className="legend-pass">With Improved Pass {possibleLevelsWithPass.toFixed(1)}</span>
+            <span className="legend-earned">Earned</span>
+            <span className="legend-free">Projected</span>
+            <span className="legend-pass">With Improved Pass</span>
           </div>
           {nextMilestone && (
             <p className="track-next">
@@ -181,22 +192,11 @@ function App() {
           )}
         </section>
 
-        <section className="result-grid" aria-label="Battlepass result">
-          <div className="result-panel">
-            <div className="panel-topline">
-              <p className="section-label">Best case scenario</p>
-              <span className="result-tag">LOGINS + DAILY + SPECIAL</span>
-            </div>
-            <div className="result-number">{possibleLevelsAllTasks}<span> lvl</span></div>
-            <p className="result-description">Projected level from remaining logins, daily tasks and the special tasks you have available.</p>
-            <div className="special-task-note"><span>{availableSpecialTasks} special tasks available</span><strong>+{futureSpecialTaskPoints} PP possible</strong></div>
-            <div className="result-progress"><span style={{ width: `${Math.min((possibleLevelsAllTasks / battlepassRules.maxLevel) * 100, 100)}%` }} /></div>
-            <div className="result-footer"><span>Current level {bpLevel}</span><strong>{daysRemaining} days left</strong></div>
-          </div>
-          <div className="milestone-panel">
-            <div className="panel-topline">
-              <p className="section-label">Season milestones</p>
-              <span className="input-hint">Pick a target</span>
+        <section className="panel-grid" aria-label="Milestones and tempo">
+          <div className="tile milestone-panel">
+            <div className="panel-head">
+              <h3>Season milestones</h3>
+              <span>Pick a target</span>
             </div>
             <ul className="milestone-list">
               {milestones.map((milestone) => (
@@ -218,23 +218,20 @@ function App() {
                 </li>
               ))}
             </ul>
-            {milestones.find((milestone) => milestone.note) && (
-              <p className="milestone-note">{milestones.find((milestone) => milestone.note)?.note}</p>
-            )}
+            {milestoneNote && <p className="milestone-note">{milestoneNote}</p>}
           </div>
-        </section>
 
-        <section className={`tempo-zone tempo-${tempoState}`} aria-labelledby="tempo-heading">
-          <div className="zone-heading compact-heading">
-            <div>
-              <div>
-                <p className="section-label">Reward gap</p>
-                <h2 id="tempo-heading">Level {targetLevel} tempo</h2>
-              </div>
+          <div className={`tile tempo-panel tempo-${tempoState}`}>
+            <div className="panel-head">
+              <h3>Level {targetLevel} tempo</h3>
+              <span>
+                {pickedTarget === null ? (
+                  "Next milestone"
+                ) : (
+                  <button className="text-button muted-button" type="button" onClick={() => setPickedTarget(null)}>Back to next milestone</button>
+                )}
+              </span>
             </div>
-            <span className="input-hint">{pickedTarget === null ? "Next milestone" : <button className="text-button muted-button" type="button" onClick={() => setPickedTarget(null)}>Back to next milestone</button>}</span>
-          </div>
-          <div className="tempo-layout">
             <div className="tempo-gap">
               {targetMargin < 0 ? (
                 <>
@@ -249,81 +246,82 @@ function App() {
               )}
               <small>{levelsToTarget > 0 ? `${levelsToTarget.toFixed(1)} levels to climb from here` : "Already past this milestone"}</small>
             </div>
-            <div className="tempo-meter">
-              {tempoState === "reached" ? (
-                <p className="tempo-message">Level {targetLevel} is already behind you — nothing left to grind for it.</p>
-              ) : tempoState === "logins" ? (
-                <p className="tempo-message">Daily logins alone carry you past level {targetLevel}. Tasks are optional from here.</p>
-              ) : daysRemaining === 0 ? (
-                <p className="tempo-message">The season is over, so there is no tempo left to set.</p>
-              ) : (
-                <>
-                  <div className="tempo-figure">
-                    <strong>{requiredPointsPerDay.toFixed(1)}</strong>
-                    <span>PP per day needed from tasks, for {daysRemaining} days</span>
-                  </div>
-                  <div className="tempo-track">
-                    <span className="tempo-fill" style={{ width: `${tempoFillWidth}%` }} />
-                    {specialPointsPerDay > 0 && <span className="tempo-marker" style={{ left: `${tempoMarkerLeft}%` }} />}
-                  </div>
-                  <div className="tempo-scale">
-                    <span>0</span>
-                    <span>{specialPointsPerDay > 0 ? `${dailyTaskCeiling} daily + ${specialPointsPerDay.toFixed(1)} special = ${maxPointsPerDay.toFixed(1)} PP/day ceiling` : `${maxPointsPerDay.toFixed(1)} PP/day ceiling`}</span>
-                  </div>
-                  <p className="tempo-message">{tempoMessage}</p>
-                </>
-              )}
-            </div>
-          </div>
-          {levelsToBuy > 0 && (
-            <div className="buyout">
-              <div className="buyout-head">
-                <p className="section-label">Closing the gap with Golden Eagles</p>
-                <span>{levelsToBuy} {levelsToBuy === 1 ? "level" : "levels"} to buy</span>
-              </div>
-              <div className="buyout-options">
-                <div className={`buyout-option${cheaperWithPass ? "" : " is-cheaper"}`}>
-                  <span>Levels only</span>
-                  <strong>{buyDirectCost.toLocaleString("en-US")} GE</strong>
-                  <small>{levelsToBuy} bought levels</small>
+            {tempoState === "reached" ? (
+              <p className="tempo-message">Level {targetLevel} is already behind you — nothing left to grind for it.</p>
+            ) : tempoState === "logins" ? (
+              <p className="tempo-message">Daily logins alone carry you past level {targetLevel}. Tasks are optional from here.</p>
+            ) : daysRemaining === 0 ? (
+              <p className="tempo-message">The season is over, so there is no tempo left to set.</p>
+            ) : (
+              <>
+                <div className="tempo-figure">
+                  <strong>{requiredPointsPerDay.toFixed(1)}</strong>
+                  <span>PP per day needed from tasks</span>
                 </div>
-                <div className={`buyout-option${cheaperWithPass ? " is-cheaper" : ""}`}>
-                  <span>Improved Pass {levelsAfterPass > 0 ? "+ levels" : "only"}</span>
-                  <strong>{buyWithPassCost.toLocaleString("en-US")} GE</strong>
-                  <small>{battlepassRules.premiumCost} GE for {passLevels} levels{levelsAfterPass > 0 ? ` + ${levelsAfterPass} bought` : ""}</small>
+                <div className="tempo-track">
+                  <span className="tempo-fill" style={{ width: `${tempoFillWidth}%` }} />
+                  {specialPointsPerDay > 0 && <span className="tempo-marker" style={{ left: `${tempoMarkerLeft}%` }} />}
                 </div>
+                <div className="tempo-scale">
+                  <span>0</span>
+                  <span>{specialPointsPerDay > 0 ? `${dailyTaskCeiling} daily + ${specialPointsPerDay.toFixed(1)} special = ${maxPointsPerDay.toFixed(1)} ceiling` : `${maxPointsPerDay.toFixed(1)} PP/day ceiling`}</span>
+                </div>
+                <p className="tempo-message">{tempoMessage}</p>
+              </>
+            )}
+            {levelsToBuy > 0 && (
+              <div className="buyout">
+                <div className="buyout-head">
+                  <h4>Closing the gap with Golden Eagles</h4>
+                  <span>{levelsToBuy} {levelsToBuy === 1 ? "level" : "levels"} to buy</span>
+                </div>
+                <div className="buyout-options">
+                  <div className={`buyout-option${cheaperWithPass ? "" : " is-cheaper"}`}>
+                    <span>Levels only</span>
+                    <strong>{buyDirectCost.toLocaleString("en-US")} GE</strong>
+                    <small>{levelsToBuy} bought levels</small>
+                  </div>
+                  <div className={`buyout-option${cheaperWithPass ? " is-cheaper" : ""}`}>
+                    <span>Improved Pass {levelsAfterPass > 0 ? "+ levels" : "only"}</span>
+                    <strong>{buyWithPassCost.toLocaleString("en-US")} GE</strong>
+                    <small>{battlepassRules.premiumCost} GE for {passLevels} levels{levelsAfterPass > 0 ? ` + ${levelsAfterPass} bought` : ""}</small>
+                  </div>
+                </div>
+                <p className="buyout-note">Buying levels requires owning a Battle Pass, and the Improved Pass counts as {passLevels} bought levels, so anything on top of it starts at a higher rate.</p>
               </div>
-              <p className="buyout-note">Buying levels requires owning a Battle Pass, and the price climbs from {battlepassRules.levelPriceTiers[0].price} to {battlepassRules.levelPriceTiers[battlepassRules.levelPriceTiers.length - 1].price} GE per level as you buy more. The Improved Pass counts as {passLevels} bought levels, so anything on top of it starts at the higher rate.</p>
-            </div>
-          )}
-        </section>
-
-        <section className="forecast-zone" aria-labelledby="forecast-heading">
-          <div className="zone-heading compact-heading">
-            <div>
-              <div>
-                <p className="section-label">Forecast</p>
-                <h2 id="forecast-heading">Possible finish</h2>
-              </div>
-            </div>
-            <span className="input-hint">Based on {daysRemaining} days remaining</span>
-          </div>
-          <div className="scenario-table">
-            <div className="scenario-row scenario-header"><span>Scenario</span><span>Projected level</span><span>Additional gain</span></div>
-            <div className="scenario-row"><span><strong>Logins only</strong><small>Keep logging in daily</small></span><strong className="scenario-level">{possibleLevelsLogins}</strong><span>+{(possibleLevelsLogins - totalPoints / 10).toFixed(1)} levels</span></div>
-            <div className="scenario-row featured-row"><span><strong>Logins + easy tasks</strong><small>Daily logins and easy tasks</small></span><strong className="scenario-level">{possibleLevelsEasy}</strong><span>+{(possibleLevelsEasy - totalPoints / 10).toFixed(1)} levels</span></div>
-            <div className="scenario-row"><span><strong>Logins + easy + medium</strong><small>Complete every available task</small></span><strong className="scenario-level">{possibleLevelsMedium}</strong><span>+{(possibleLevelsMedium - totalPoints / 10).toFixed(1)} levels</span></div>
+            )}
           </div>
         </section>
 
-        <section className="details-grid">
-          <div className="details-panel">
-            <div className="zone-heading compact-heading"><div><div><p className="section-label">Current points</p><h2>Progress breakdown</h2></div></div></div>
+        <section className="panel-grid" aria-label="Point sources">
+          <div className="tile">
+            <div className="panel-head">
+              <h3>What gets you there</h3>
+              <span>{daysRemaining} days of effort</span>
+            </div>
+            <dl className="waterfall">
+              {waterfall.map((row) => (
+                <div key={row.label}>
+                  <dt>{row.label}</dt>
+                  <dd>{row.lead ? row.value.toFixed(1) : `+${row.value.toFixed(1)}`}</dd>
+                </div>
+              ))}
+              <div className="waterfall-total">
+                <dt>Projected finish</dt>
+                <dd>{possibleLevelsAllTasks.toFixed(1)}</dd>
+              </div>
+            </dl>
+          </div>
+
+          <div className="tile">
+            <div className="panel-head">
+              <h3>Progress breakdown</h3>
+              <span>{totalPoints} pts so far</span>
+            </div>
             <div className="breakdown-list">
               <div className="breakdown-source breakdown-logins"><i /> <span>Logins</span><strong>{loginPoints} pts</strong></div>
               <div className="breakdown-source breakdown-challenges"><i /> <span>Challenges</span><strong>{challengePoints} pts</strong></div>
               <div className="breakdown-source breakdown-tasks"><i /> <span>Daily and special tasks</span><strong>{otherPoints} pts</strong></div>
-              <div className="breakdown-total"><span>Total progress</span><strong>{totalPoints} pts</strong></div>
             </div>
             <div className="progress-track">
               <div className="current-progress" style={{ width: `${currentProgress}%` }}>
@@ -333,15 +331,10 @@ function App() {
               </div>
             </div>
           </div>
-          <div className="details-panel rules-panel">
-            <p className="section-label">Rules</p>
-            <h2>Point values</h2>
-            <div className="rule-columns"><span>Easy task<strong>+{battlepassRules.easyTaskPoints} pts</strong></span><span>Medium task<strong>+{battlepassRules.mediumTaskPoints} pts</strong></span><span>Special task<strong>+{battlepassRules.specialTaskPoints} pts</strong></span><span>{battlepassRules.challengeBonusAfter} challenges<strong>+{pointsFromChallenges(battlepassRules.challengeBonusAfter) / 10} levels</strong></span><span>Battlepass purchase<strong>+{battlepassRules.premiumPoints / 10} levels</strong></span></div>
-          </div>
         </section>
       </main>
 
-      <footer className="site-footer"><span>Based on the <a href="https://github.com/Gardnem6/wt-passhelper" target="_blank" rel="noreferrer">original tool by Gardnem6</a></span><span>Battlepass deadline: {lastDay.format("DD/MM/YYYY")}</span></footer>
+      <footer className="site-footer"><span>Based on the <a href="https://github.com/Gardnem6/wt-passhelper" target="_blank" rel="noreferrer">original tool by Gardnem6</a></span><span>Season ends {lastDay.format("DD/MM/YYYY")}</span></footer>
     </div>
   );
 }
