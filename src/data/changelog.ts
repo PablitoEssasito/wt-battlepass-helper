@@ -7,6 +7,14 @@ export interface ChangelogEntry {
 // Newest first.
 export const changelog: ChangelogEntry[] = [
   {
+    version: "1.5.0",
+    date: "2026-09-15",
+    changes: [
+      "Added a low-key way to support the calculator: a \"Buy me a ko-fi\" button in the footer that opens a Ko-fi donation panel in a dialog, without leaving the page.",
+      "Added a disclaimer that this is an unofficial fan tool, not affiliated with Gaijin Entertainment.",
+    ],
+  },
+  {
     version: "1.4.0",
     date: "2026-09-15",
     changes: [

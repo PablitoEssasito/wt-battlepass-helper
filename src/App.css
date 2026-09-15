@@ -167,6 +167,57 @@ body {
   color: var(--muted);
 }
 
+.footer-disclaimer {
+  color: var(--muted);
+  flex-basis: 100%;
+  font-size: var(--fs-micro);
+  margin: 0;
+  opacity: 0.75;
+}
+
+.support-button {
+  align-items: center;
+  background: none;
+  border: 1px solid var(--accent);
+  color: var(--accent-dark);
+  cursor: pointer;
+  display: inline-flex;
+  font-family: inherit;
+  font-size: var(--fs-small);
+  font-weight: 700;
+  gap: 8px;
+  padding: 7px 13px;
+}
+
+.support-button:hover {
+  background: rgba(239, 118, 84, 0.14);
+  color: var(--ink);
+}
+
+.support-button svg {
+  height: 17px;
+  width: 17px;
+}
+
+.support-dialog {
+  max-width: 420px;
+}
+
+.support-intro {
+  color: #b8c7c0;
+  font-size: var(--fs-body);
+  line-height: 1.6;
+  margin: 0 0 18px;
+}
+
+.support-frame {
+  background: #f9f9f9;
+  border: 1px solid var(--line);
+  display: block;
+  height: min(620px, 60vh);
+  width: 100%;
+}
+
 /* ---------- shared block furniture ---------- */
 
 .section-label {

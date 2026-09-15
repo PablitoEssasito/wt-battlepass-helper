@@ -6,6 +6,7 @@ import NumberInput from "./components/NumberInput";
 import DateInput from "./components/DateInput";
 import ChangelogDialog from "./components/ChangelogDialog";
 import PointValuesDialog from "./components/PointValuesDialog";
+import SupportDialog from "./components/SupportDialog";
 import { buildForecast, PassOwned, projectLevel } from "./helpers/forecast";
 import { setNumberInput } from "./helpers/setNumberInput";
 import { battlepassRules } from "./data/battlepassRules";
@@ -430,7 +431,9 @@ function App() {
           <ChangelogDialog />
           <span className="footer-version">v{APP_VERSION}</span>
           <a href="https://github.com/PablitoEssasito/wt-battlepass-helper" target="_blank" rel="noreferrer">Source on GitHub</a>
+          <SupportDialog />
         </nav>
+        <p className="footer-disclaimer">Unofficial fan tool, not affiliated with Gaijin Entertainment.</p>
       </footer>
     </div>
   );
