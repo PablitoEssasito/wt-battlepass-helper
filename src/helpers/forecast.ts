@@ -74,8 +74,11 @@ export const buildForecast = ({
   const possibleLevelsEasy = toLevels(withEasy);
   const possibleLevelsMedium = toLevels(withMedium);
   const possibleLevelsAllTasks = toLevels(withMedium + futureSpecialTaskPoints);
-  const possibleLevelsWithPass =
-    possibleLevelsAllTasks + battlepassRules.premiumPoints / 10;
+  // Only a player without a pass can still gain these levels: an Improved Pass owner
+  // already has them inside the level they entered, and a Battle Pass owner cannot add it.
+  const improvedPassGain =
+    passOwned === "none" ? battlepassRules.premiumPoints / 10 : 0;
+  const possibleLevelsWithPass = possibleLevelsAllTasks + improvedPassGain;
 
   // What each activity adds on top of the one before it, ending on the projected level.
   const contributions = {
@@ -168,6 +171,7 @@ export const buildForecast = ({
     possibleLevelsMedium,
     possibleLevelsAllTasks,
     possibleLevelsWithPass,
+    improvedPassGain,
     contributions,
     milestones,
     nextMilestone,

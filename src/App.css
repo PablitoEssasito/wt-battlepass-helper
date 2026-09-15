@@ -700,16 +700,19 @@ body {
 
 .pass-picker {
   align-items: center;
+  border-top: 1px solid var(--line);
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
-  margin-top: 14px;
+  margin-top: 22px;
+  padding-top: 18px;
 }
 
 .pass-picker > span {
   color: var(--muted);
   font-size: var(--fs-small);
-  margin-right: 2px;
+  font-weight: 700;
+  margin-right: 8px;
 }
 
 .pass-picker button {
@@ -728,8 +731,8 @@ body {
 }
 
 .pass-picker button.is-owned {
-  background: rgba(255, 255, 255, 0.06);
-  border-color: var(--tempo);
+  background: rgba(239, 118, 84, 0.12);
+  border-color: var(--accent);
   color: var(--ink);
   font-weight: 700;
 }

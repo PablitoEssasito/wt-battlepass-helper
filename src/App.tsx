@@ -35,6 +35,7 @@ function App() {
     otherPoints,
     possibleLevelsAllTasks,
     possibleLevelsWithPass,
+    improvedPassGain,
     contributions,
     milestones,
     nextMilestone,
@@ -163,6 +164,20 @@ function App() {
               <small className="known-deadline">Official: {originalLastDay.format("DD/MM/YYYY")}</small>
             </div>
           </div>
+          <div className="pass-picker" role="group" aria-label="Pass you already own">
+            <span>Pass you own</span>
+            {passOptions.map((option) => (
+              <button
+                key={option.id}
+                type="button"
+                className={option.id === passOwned ? "is-owned" : ""}
+                aria-pressed={option.id === passOwned}
+                onClick={() => setPassOwned(option.id)}
+              >
+                {option.label}
+              </button>
+            ))}
+          </div>
           {hasInputConflict && <p className="input-warning">Current progress is lower than the points implied by your logins and challenges. Check the values before relying on the forecast.</p>}
         </section>
 
@@ -179,7 +194,8 @@ function App() {
             <strong>{possibleLevelsAllTasks.toFixed(1)}</strong>
             <span>lvl</span>
             <em>
-              {currentLevel.toFixed(1)} now <i>&rarr;</i> {possibleLevelsWithPass.toFixed(1)} with Improved Pass
+              {currentLevel.toFixed(1)} now
+              {improvedPassGain > 0 && <> <i>&rarr;</i> {possibleLevelsWithPass.toFixed(1)} with Improved Pass</>}
             </em>
           </div>
           <div className="track-scale" aria-hidden="true">
@@ -188,7 +204,7 @@ function App() {
             ))}
           </div>
           <div className="track-bar">
-            <span className="track-fill track-pass" style={{ width: `${trackPercent(possibleLevelsWithPass)}%` }} />
+            {improvedPassGain > 0 && <span className="track-fill track-pass" style={{ width: `${trackPercent(possibleLevelsWithPass)}%` }} />}
             <span className="track-fill track-free" style={{ width: `${trackPercent(possibleLevelsAllTasks)}%` }} />
             <span className="track-fill track-earned" style={{ width: `${trackPercent(currentLevel)}%` }} />
             {milestones.map((milestone) => (
@@ -198,7 +214,7 @@ function App() {
           <div className="track-legend">
             <span className="legend-earned">Earned</span>
             <span className="legend-free">Projected</span>
-            <span className="legend-pass">With Improved Pass</span>
+            {improvedPassGain > 0 && <span className="legend-pass">With Improved Pass</span>}
           </div>
           {nextMilestone && (
             <p className="track-next">
@@ -294,20 +310,6 @@ function App() {
                 <div className="buyout-head">
                   <h4>Closing the gap with Golden Eagles</h4>
                   <span>{levelsToBuy} {levelsToBuy === 1 ? "level" : "levels"} to buy</span>
-                </div>
-                <div className="pass-picker" role="group" aria-label="Pass you already own">
-                  <span>I own</span>
-                  {passOptions.map((option) => (
-                    <button
-                      key={option.id}
-                      type="button"
-                      className={option.id === passOwned ? "is-owned" : ""}
-                      aria-pressed={option.id === passOwned}
-                      onClick={() => setPassOwned(option.id)}
-                    >
-                      {option.label}
-                    </button>
-                  ))}
                 </div>
                 {passOwned === "none" ? (
                   <div className="buyout-options">

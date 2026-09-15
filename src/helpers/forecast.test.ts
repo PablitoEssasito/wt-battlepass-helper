@@ -75,6 +75,27 @@ test("the contributions add up to the projected level", () => {
   );
 });
 
+test("the Improved Pass only adds levels to someone who can still buy it", () => {
+  const seed = { bpLevel: 60, loginCount: 30, daysRemaining: 36, availableSpecialTasks: 20 };
+  const noPass = buildForecast(input({ ...seed, passOwned: "none" }));
+  const owned = buildForecast(input({ ...seed, passOwned: "improved" }));
+  const battle = buildForecast(input({ ...seed, passOwned: "battle" }));
+
+  expect(noPass.possibleLevelsWithPass - noPass.possibleLevelsAllTasks).toBeCloseTo(15, 5);
+  // Already inside the level the player entered, so it must not be added again.
+  expect(owned.possibleLevelsWithPass).toBe(owned.possibleLevelsAllTasks);
+  // Cannot be added on top of a plain Battle Pass at all.
+  expect(battle.possibleLevelsWithPass).toBe(battle.possibleLevelsAllTasks);
+});
+
+test("no milestone is reported as reachable with a pass that cannot be bought", () => {
+  const owned = buildForecast(
+    input({ bpLevel: 60, loginCount: 30, daysRemaining: 36, availableSpecialTasks: 20, passOwned: "improved" })
+  );
+
+  expect(owned.milestones.some((milestone) => milestone.status === "withPass")).toBe(false);
+});
+
 test("milestones report every status from reached to out of reach", () => {
   const { milestones } = buildForecast(
     input({ bpLevel: 60, loginCount: 30, daysRemaining: 36, availableSpecialTasks: 20 })
