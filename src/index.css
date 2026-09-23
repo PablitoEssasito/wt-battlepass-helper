@@ -22,3 +22,12 @@ input {
 a {
   color: #f3b64b;
 }
+
+.noscript-note {
+  margin: 0;
+  padding: 0.5rem 1rem;
+  background: #ef7654;
+  color: #11171b;
+  font-size: 0.8rem;
+  text-align: center;
+}

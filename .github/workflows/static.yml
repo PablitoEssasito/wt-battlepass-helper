@@ -6,6 +6,10 @@ on:
   push:
     branches: ["master"]
 
+  # Rebuilds daily, because the prerendered page counts the remaining days from its build date
+  schedule:
+    - cron: "15 0 * * *"
+
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
