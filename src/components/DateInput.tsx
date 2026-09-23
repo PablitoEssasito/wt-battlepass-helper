@@ -1,5 +1,4 @@
-import React from "react";
-import { Form } from "react-bootstrap";
+import React, { useId } from "react";
 
 interface Props {
   callback: React.Dispatch<React.SetStateAction<string>>;
@@ -10,10 +9,14 @@ interface Props {
 }
 
 function DateInput(props: Props) {
+  const id = useId();
+
   return (
-    <Form.Group>
-      <Form.Label>{props.label}</Form.Label>
-      <Form.Control
+    <div>
+      <label className="form-label" htmlFor={id}>{props.label}</label>
+      <input
+        id={id}
+        className="form-control"
         type="date"
         lang="en-GB"
         min={props.min}
@@ -21,7 +24,7 @@ function DateInput(props: Props) {
         value={props.value}
         onChange={(e) => props.callback(e.target.value)}
       />
-    </Form.Group>
+    </div>
   );
 }
 

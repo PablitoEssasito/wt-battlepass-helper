@@ -1,5 +1,4 @@
-import React from "react";
-import { Form } from "react-bootstrap";
+import React, { useId } from "react";
 import { setNumberInput } from "../helpers/setNumberInput";
 
 interface Props {
@@ -11,11 +10,14 @@ interface Props {
 }
 
 function NumberInput(props: Props) {
+  const id = useId();
 
   return (
-    <Form.Group>
-      <Form.Label className="text-light">{props.label}</Form.Label>
-      <Form.Control
+    <div>
+      <label className="text-light form-label" htmlFor={id}>{props.label}</label>
+      <input
+        id={id}
+        className="form-control"
         type="number"
         step={1}
         min={props.min}
@@ -25,7 +27,7 @@ function NumberInput(props: Props) {
           setNumberInput(props.callback, e.target.value, props.min, props.max)
         }
       />
-    </Form.Group>
+    </div>
   );
 }
 
