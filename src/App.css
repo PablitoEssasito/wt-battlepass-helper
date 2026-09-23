@@ -60,9 +60,10 @@ body {
 
 .brand-mark {
   align-items: center;
-  background: var(--accent);
-  color: #fff8ef;
+  border: 2px solid var(--accent);
+  color: var(--accent);
   display: flex;
+  flex-shrink: 0;
   font-size: var(--fs-small);
   font-weight: 800;
   height: 36px;
@@ -172,7 +173,7 @@ body {
   flex-basis: 100%;
   font-size: var(--fs-micro);
   margin: 0;
-  opacity: 0.75;
+  opacity: 0.9;
 }
 
 .support-button {
