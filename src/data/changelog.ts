@@ -7,6 +7,16 @@ export interface ChangelogEntry {
 // Newest first.
 export const changelog: ChangelogEntry[] = [
   {
+    version: "1.5.1",
+    date: "2026-09-23",
+    changes: [
+      "Links to the calculator now show a preview image when shared on Discord, Reddit or X.",
+      "The page appears before its script finishes loading, and no longer waits for an external stylesheet.",
+      "Each field's label is now tied to its input, so screen readers announce it and clicking the label focuses the field.",
+      "Raised the contrast of the WT mark and the footer disclaimer so both are easier to read.",
+    ],
+  },
+  {
     version: "1.5.0",
     date: "2026-09-15",
     changes: [
