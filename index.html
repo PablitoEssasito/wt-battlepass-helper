@@ -4,19 +4,65 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/x-icon" href="favicon.ico" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>War Thunder Battle Pass Calculator</title>
+    <meta name="theme-color" content="#212529" />
+    <!-- {{...}} placeholders are filled from src/data/season.ts and package.json at build time, see vite.config.ts. -->
+    <title>War Thunder Battle Pass Calculator – Season {{seasonNumber}}: {{seasonName}}</title>
     <meta
       name="description"
-      content="Calculate your War Thunder Battle Pass progress and see which level you can reach before the season ends."
+      content="Free War Thunder Battle Pass calculator for Season {{seasonNumber}}, ending {{seasonEnd}}. See which level you can still reach and what the rest costs in Golden Eagles."
     />
+    <link rel="canonical" href="{{siteUrl}}" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="War Thunder Tools Hub" />
+    <meta property="og:title" content="War Thunder Battle Pass Calculator – Season {{seasonNumber}}" />
+    <meta
+      property="og:description"
+      content="See which Battle Pass level you can still reach before {{seasonEnd}}, and what the rest costs in Golden Eagles."
+    />
+    <meta property="og:url" content="{{siteUrl}}" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:image" content="{{siteUrl}}og-image.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="The calculator's projected finish: level 67.6 by the end of the season, 82.6 with the Improved Pass, on a bar marking the season rewards." />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content="{{siteUrl}}og-image.png" />
+    <meta name="twitter:title" content="War Thunder Battle Pass Calculator – Season {{seasonNumber}}" />
+    <meta
+      name="twitter:description"
+      content="See which Battle Pass level you can still reach before {{seasonEnd}}, and what the rest costs in Golden Eagles."
+    />
+
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
-        "@type": "WebApplication",
-        "name": "War Thunder Battle Pass Calculator",
-        "applicationCategory": "UtilitiesApplication",
-        "operatingSystem": "Web",
-        "description": "Calculate your War Thunder Battle Pass progress and projected season level."
+        "@graph": [
+          {
+            "@type": "WebApplication",
+            "name": "War Thunder Battle Pass Calculator",
+            "url": "{{siteUrl}}",
+            "description": "Calculate your War Thunder Battle Pass progress, the level you can reach before the season ends, and the Golden Eagle cost of closing the gap.",
+            "applicationCategory": "UtilitiesApplication",
+            "operatingSystem": "Web",
+            "browserRequirements": "Requires JavaScript",
+            "inLanguage": "en",
+            "softwareVersion": "{{appVersion}}",
+            "isAccessibleForFree": true,
+            "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+            "about": { "@type": "VideoGame", "name": "War Thunder" },
+            "author": { "@type": "Person", "name": "PablitoEssasito", "url": "https://github.com/PablitoEssasito" },
+            "isBasedOn": "https://github.com/Gardnem6/wt-passhelper",
+            "isPartOf": { "@type": "WebSite", "name": "War Thunder Tools Hub", "url": "https://pablitoessasito.github.io/" }
+          },
+          {
+            "@type": "BreadcrumbList",
+            "itemListElement": [
+              { "@type": "ListItem", "position": 1, "name": "War Thunder Tools Hub", "item": "https://pablitoessasito.github.io/" },
+              { "@type": "ListItem", "position": 2, "name": "Battle Pass Calculator", "item": "{{siteUrl}}" }
+            ]
+          }
+        ]
       }
     </script>
     <!-- Google tag (gtag.js) -->
